@@ -1,0 +1,3 @@
+- Starts on ground floor (floor 0)
+- ( -> Up on floor
+- ) -> Down one floor
