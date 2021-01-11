@@ -44,3 +44,74 @@ nVisitedSantOrRobot as = length $ L.nub $ housesSanta ++ housesRobot
   where
     housesSanta = scanl moveHouse (0, 0) [a | (i, a) <- zip [1 ..] as, odd i]
     housesRobot = scanl moveHouse (0, 0) [a | (i, a) <- zip [1 ..] as, even i]
+
+nVowels :: [Char] -> Int
+nVowels cs = length [c | c <- cs, c `elem` ['a', 'e', 'i', 'o', 'u']]
+
+containsDoubles :: [Char] -> Bool
+containsDoubles [] = False
+containsDoubles [c] = False
+containsDoubles (c1 : c2 : cs) = c1 == c2 || containsDoubles (c2 : cs)
+
+isNice :: [Char] -> Bool
+isNice cs = nVowels cs >= 3 && containsDoubles cs && not (any (`L.isInfixOf` cs) ["ab", "cd", "pq", "xy"])
+
+nNice :: [[Char]] -> Int
+nNice css = length $ filter isNice css
+
+getPairs :: [a] -> [(a, a)]
+getPairs = zip <*> tail
+
+remConDups :: Eq a => [a] -> [a]
+remConDups [] = []
+remConDups [x] = [x]
+remConDups (x1 : x2 : xs)
+  | x1 == x2 = remConDups (x2 : xs)
+  | otherwise = x1 : remConDups (x2 : xs)
+
+counts :: Eq a => [a] -> [Int]
+counts xs = [count xs x | x <- xs]
+
+countNonCons :: Eq a => [a] -> [Int]
+countNonCons xs = [count (take (i - 1) xs ++ [xs !! i] ++ drop (i + 2) xs) x | (i, x) <- zip [0 ..] xs]
+
+containsSymTriple :: [Char] -> Bool
+containsSymTriple [] = False
+containsSymTriple [c] = False
+containsSymTriple [c1, c2] = False
+containsSymTriple (c1 : c2 : c3 : cs) = c1 == c3 || containsSymTriple (c2 : c3 : cs)
+
+newIsNice :: [Char] -> Bool
+newIsNice cs = containsSymTriple cs && any (>= 2) (countNonCons $ getPairs cs)
+
+data Action = TurnOn | TurnOff | Toggle
+
+type Rect = ((Int, Int), (Int, Int))
+
+type LightGrid = [[Bool]]
+
+slice :: Int -> Int -> [a] -> [a]
+slice from to xs
+  | from <= to = take (to - from + 1) (drop from xs)
+  | otherwise = take (from - to + 1) (drop to xs)
+
+getSubGrid :: Rect -> [[a]] -> [[a]]
+getSubGrid ((i1, j1), (i2, j2)) grid = map (slice j1 j2) $ slice i1 i2 grid
+
+procSubGrid :: Action -> LightGrid -> LightGrid
+procSubGrid action subgrid = case action of
+  TurnOn -> map (map $ const True) subgrid
+  TurnOff -> map (map $ const False) subgrid
+  Toggle -> map (map not) subgrid
+
+replaceSubGrid :: Rect -> [[a]] -> [[a]] -> [[a]]
+replaceSubGrid ((i1, j1), (i2, j2)) subgrid grid =
+  take i1 grid
+    ++ [take j1 gl ++ sgl ++ drop (j2 + 1) gl | (sgl, gl) <- zip subgrid (slice i1 i2 grid)]
+    ++ drop (i2 + 1) grid
+
+procInst :: Action -> Rect -> LightGrid -> LightGrid
+procInst action rect grid = replaceSubGrid rect (procSubGrid action (getSubGrid rect grid)) grid
+
+procInput :: LightGrid -> [(Action, Rect)] -> LightGrid
+procInput = foldl (\grid (action, rect) -> procInst action rect grid)
