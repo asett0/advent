@@ -1,4 +1,7 @@
+import Data.Bits
+import qualified Data.Char as Char
 import qualified Data.List as L
+import Data.Word
 
 count :: Eq a => [a] -> a -> Int
 count xs e = length [x | x <- xs, x == e]
@@ -90,6 +93,8 @@ type Rect = ((Int, Int), (Int, Int))
 
 type LightGrid = [[Bool]]
 
+type NewLightGrid = [[Int]]
+
 slice :: Int -> Int -> [a] -> [a]
 slice from to xs
   | from <= to = take (to - from + 1) (drop from xs)
@@ -104,6 +109,12 @@ procSubGrid action subgrid = case action of
   TurnOff -> map (map $ const False) subgrid
   Toggle -> map (map not) subgrid
 
+procNewSubGrid :: Action -> NewLightGrid -> NewLightGrid
+procNewSubGrid action subgrid = case action of
+  TurnOn -> map (map (+ 1)) subgrid
+  TurnOff -> map (map (\x -> if x > 0 then x - 1 else 0)) subgrid
+  Toggle -> map (map (+ 2)) subgrid
+
 replaceSubGrid :: Rect -> [[a]] -> [[a]] -> [[a]]
 replaceSubGrid ((i1, j1), (i2, j2)) subgrid grid =
   take i1 grid
@@ -115,3 +126,29 @@ procInst action rect grid = replaceSubGrid rect (procSubGrid action (getSubGrid 
 
 procInput :: LightGrid -> [(Action, Rect)] -> LightGrid
 procInput = foldl (\grid (action, rect) -> procInst action rect grid)
+
+newProcInst :: Action -> Rect -> NewLightGrid -> NewLightGrid
+newProcInst action rect grid = replaceSubGrid rect (procNewSubGrid action (getSubGrid rect grid)) grid
+
+newProcInput :: NewLightGrid -> [(Action, Rect)] -> NewLightGrid
+newProcInput = foldl (\grid (action, rect) -> newProcInst action rect grid)
+
+data Statement = AND String String | OR String String | RSHIFT String Int | LSHIFT String Int | NOT String | ASSIGN String
+  deriving (Show)
+
+type Instruction = (Statement, String)
+
+getStatement :: String -> [Instruction] -> Statement
+getStatement search ((stmt, s) : insts) = if s == search then stmt else getStatement search insts
+
+isInteger :: String -> Bool
+isInteger = all Char.isDigit
+
+eval :: String -> [Instruction] -> Word16
+eval s instructions = case getStatement s instructions of
+  AND s1 s2 -> (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions) .&. (if isInteger s2 then (read s2 :: Word16) else eval s2 instructions)
+  OR s1 s2 -> (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions) .|. (if isInteger s2 then (read s2 :: Word16) else eval s2 instructions)
+  RSHIFT s1 x -> shiftR (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions) x
+  LSHIFT s1 x -> shiftL (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions) x
+  NOT s1 -> complement (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions)
+  ASSIGN s1 -> (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions)
