@@ -3,6 +3,8 @@ import qualified Data.Char as Char
 import qualified Data.List as L
 import Data.Word
 
+main = print ans
+
 count :: Eq a => [a] -> a -> Int
 count xs e = length [x | x <- xs, x == e]
 
@@ -152,3 +154,7 @@ eval s instructions = case getStatement s instructions of
   LSHIFT s1 x -> shiftL (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions) x
   NOT s1 -> complement (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions)
   ASSIGN s1 -> (if isInteger s1 then (read s1 :: Word16) else eval s1 instructions)
+
+insts = [(AND "af" "ah", "ai")]
+
+ans = eval "a" insts
