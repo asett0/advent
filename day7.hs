@@ -11,12 +11,20 @@ data Gate = ID Signal | AND Signal Signal | OR Signal Signal | NOT Signal | RSHI
 
 data Op = And String Signal | Or String Signal | Op String (Word.Word16 -> Word.Word16)
 
+type Error = String
+
 main :: IO ()
 main = do
-  let a = wire "a" circuit
-  let b = wire "a" (Map.insert "b" (ID (VAL a)) circuit)
   print $ "Part a: " ++ show a
-  print $ "Part b: " ++ show b
+  print $ "Part b:" ++ show b
+
+a :: Either Error Word.Word16
+a = wire "a" circuit
+
+b :: Either Error Word.Word16
+b = case a of
+  Right x -> wire "a" (Map.insert "b" (ID (VAL x)) circuit)
+  Left error -> Left error
 
 circuit :: Map.Map String Gate
 circuit =
@@ -362,9 +370,9 @@ circuit =
       ("at", RSHIFT (VAR "as") 2)
     ]
 
-eval :: Signal -> [Op] -> Map.Map String Gate -> Word.Word16
+eval :: Signal -> [Op] -> Map.Map String Gate -> Either Error Word.Word16
 eval (VAR s) ops cmap = case Map.lookup s cmap of
-  Nothing -> error "Invalid signal"
+  Nothing -> Left $ "Error: Wire '" ++ s ++ "' is not found in the provided circuit"
   Just (ID signal) -> eval signal (Op s id : ops) cmap
   Just (NOT signal) -> eval signal (Op s complement : ops) cmap
   Just (AND signal1 signal2) -> eval signal1 (And s signal2 : ops) cmap
@@ -373,11 +381,11 @@ eval (VAR s) ops cmap = case Map.lookup s cmap of
   Just (LSHIFT signal n) -> eval signal (Op s (`shiftL` n) : ops) cmap
 eval (VAL x) ops cmap = exec x ops cmap
 
-exec :: Word.Word16 -> [Op] -> Map.Map String Gate -> Word.Word16
-exec x [] cmap = x
+exec :: Word.Word16 -> [Op] -> Map.Map String Gate -> Either Error Word.Word16
+exec x [] cmap = Right x
 exec x ((Op s f) : ops) cmap = let y = f $! x in exec y ops (Map.insert s (ID (VAL y)) cmap)
 exec x ((And s signal) : ops) cmap = eval signal (Op s (x .&.) : ops) cmap
 exec x ((Or s signal) : ops) cmap = eval signal (Op s (x .|.) : ops) cmap
 
-wire :: String -> Map.Map String Gate -> Word.Word16
+wire :: String -> Map.Map String Gate -> Either Error Word.Word16
 wire s = eval (VAR s) []
