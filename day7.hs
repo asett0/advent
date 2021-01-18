@@ -3,7 +3,7 @@ import qualified Data.Char as Char
 import qualified Data.Map.Strict as Map
 import qualified Data.Word as Word
 
-data Signal = VAL !Word.Word16 | VAR !String
+data Signal = VAL Word.Word16 | VAR String
   deriving (Show)
 
 data Gate = ID Signal | AND Signal Signal | OR Signal Signal | NOT Signal | RSHIFT Signal Int | LSHIFT Signal Int
