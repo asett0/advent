@@ -6,7 +6,7 @@ import Util (getData, int)
 type Dimensions = (Integer, Integer, Integer)
 
 input :: IO String
-input = getData "data/Day2.txt"
+input = getData "data/2015/Day2.txt"
 
 parser :: Parsec String () [Dimensions]
 parser =
