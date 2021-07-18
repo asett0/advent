@@ -15,14 +15,14 @@ moveHouse (i, j) '<' = (i - 1, j)
 moveHouse (i, j) 'v' = (i, j - 1)
 moveHouse (i, j) _ = (i, j)
 
-ex1 :: IO ()
-ex1 = do
+y2015d3ex1 :: IO ()
+y2015d3ex1 = do
   contents <- input
   let ans = length $ nub $ scanl moveHouse (0, 0) contents
   print ans
 
-ex2 :: IO ()
-ex2 = do
+y2015d3ex2 :: IO ()
+y2015d3ex2 = do
   contents <- input
   let santa = [x | (i, x) <- zip [0 ..] contents, even i]
   let robot = [x | (i, x) <- zip [0 ..] contents, odd i]

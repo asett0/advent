@@ -11,14 +11,14 @@ moveFloor floor '(' = floor + 1
 moveFloor floor ')' = floor - 1
 moveFloor floor _ = floor
 
-ex1 :: IO ()
-ex1 = do
+y2015d1ex1 :: IO ()
+y2015d1ex1 = do
   contents <- input
   let ans = foldl moveFloor 0 contents
   print ans
 
-ex2 :: IO ()
-ex2 = do
+y2015d1ex2 :: IO ()
+y2015d1ex2 = do
   contents <- input
   let ans = maybe "Never reaches basement floor" show $ elemIndex (- 1) (scanl moveFloor 0 contents)
   putStrLn ans

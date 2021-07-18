@@ -26,8 +26,8 @@ wrapping (l, w, h) =
 ribbon :: Dimensions -> Integer
 ribbon (l, w, h) = minimum [2 * (l + w), 2 * (w + h), 2 * (h + l)] + l * w * h
 
-ex1 :: IO ()
-ex1 = do
+y2015d2ex1 :: IO ()
+y2015d2ex1 = do
   contents <- input
   let dims = case p contents of
         Right res -> res
@@ -35,8 +35,8 @@ ex1 = do
   let ans = sum $ map wrapping dims
   print ans
 
-ex2 :: IO ()
-ex2 = do
+y2015d2ex2 :: IO ()
+y2015d2ex2 = do
   contents <- input
   let dims = case p contents of
         Right res -> res
