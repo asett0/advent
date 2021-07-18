@@ -8,9 +8,6 @@ main = print ans
 count :: Eq a => [a] -> a -> Int
 count xs e = length [x | x <- xs, x == e]
 
-getFloor :: [Char] -> Int
-getFloor ps = count ps '(' - count ps ')'
-
 getIndex :: [Char] -> Int -> Int -> Maybe Int
 getIndex [] n i = case n of
   -1 -> Just i
