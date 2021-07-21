@@ -33,6 +33,7 @@ library
       Year2015.Day4
       Year2015.Day5
       Year2015.Day6
+      Year2015.Day7
   other-modules:
       Paths_advent
   hs-source-dirs:

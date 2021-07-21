@@ -9,7 +9,8 @@ import qualified Util as U
 
 data Nat = Z | S Nat
 
-data SimpleLight = On | Off deriving (Eq, Show)
+data SimpleLight = On | Off
+  deriving (Eq)
 
 type AdvancedLight = Nat
 
