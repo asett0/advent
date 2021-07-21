@@ -1,7 +1,7 @@
 module Year2015.Day2 where
 
 import Text.Parsec (ParseError, Parsec, char, many, parse)
-import Util (getData, int)
+import Util (getData, nat)
 
 type Dimensions = (Integer, Integer, Integer)
 
@@ -11,7 +11,7 @@ input = getData "data/2015/Day2.txt"
 parser :: Parsec String () [Dimensions]
 parser =
   let x = char 'x'
-   in many $ (,,) <$> (int <* x) <*> (int <* x) <*> int
+   in many $ (,,) <$> nat <* x <*> nat <* x <*> nat
 
 p :: String -> Either ParseError [Dimensions]
 p = parse parser ""
