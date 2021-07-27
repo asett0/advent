@@ -176,7 +176,7 @@ gh OR gi -> gj
 lf RSHIFT 5 -> li
 x RSHIFT 3 -> z
 b RSHIFT 3 -> e
-he RSHIFT 2 -> hf 
+he RSHIFT 2 -> hf
 NOT fx -> fy
 jt AND jv -> jw
 hx OR hy -> hz
