@@ -1,3 +1,5 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Year2015.Day6 where
 
 import Data.Foldable (foldl')
@@ -8,11 +10,10 @@ import Text.Parsec.Prim (Parsec, (<|>))
 import qualified Util as U
 
 data Nat = Z | S Nat
-
-data SimpleLight = On | Off
   deriving (Eq)
 
-type AdvancedLight = Nat
+data Light = Simple Bool | Advanced Nat
+  deriving (Eq)
 
 type Coord = (Integer, Integer)
 
@@ -43,49 +44,30 @@ parser =
 p :: String -> Either ParseError [Instruction]
 p = P.parse parser ""
 
-simpleAction :: Action -> SimpleLight -> SimpleLight
-simpleAction Toggle On = Off
-simpleAction Toggle Off = On
-simpleAction TurnOn _ = On
-simpleAction TurnOff _ = Off
+enact :: Action -> Light -> Light
+enact Toggle (Simple isOn) = Simple (not isOn)
+enact Toggle (Advanced brightness) = Advanced $ S $ S brightness
+enact TurnOn (Simple _) = Simple True
+enact TurnOn (Advanced brightness) = Advanced $ S brightness
+enact TurnOff (Simple _) = Simple False
+enact TurnOff (Advanced Z) = Advanced Z
+enact TurnOff (Advanced (S n)) = Advanced n
 
-simpleActionMap :: Instruction -> M.Map Coord (SimpleLight -> SimpleLight)
-simpleActionMap (Instr action (lx, ly) (lx', ly')) =
+actionMap :: Instruction -> M.Map Coord (Light -> Light)
+actionMap (Instr action (lx, ly) (lx', ly')) =
   M.fromList
     [ ( (x, y),
-        simpleAction action
+        enact action
       )
       | x <- [min lx lx' .. max lx lx'],
         y <- [min ly ly' .. max ly ly']
     ]
 
-advancedAction :: Action -> AdvancedLight -> AdvancedLight
-advancedAction Toggle n = S (S n)
-advancedAction TurnOn n = S n
-advancedAction TurnOff Z = Z
-advancedAction TurnOff (S n) = n
+initLight :: Light -> M.Map Coord Light
+initLight light = M.fromList [((x, y), light) | x <- [0 .. 999], y <- [0 .. 999]]
 
-advancedActionMap :: Instruction -> M.Map Coord (AdvancedLight -> AdvancedLight)
-advancedActionMap (Instr action (lx, ly) (lx', ly')) =
-  M.fromList
-    [ ( (x, y),
-        advancedAction action
-      )
-      | x <- [min lx lx' .. max lx lx'],
-        y <- [min ly ly' .. max ly ly']
-    ]
-
-simpleInit :: M.Map Coord SimpleLight
-simpleInit = M.fromList [((x, y), Off) | x <- [0 .. 999], y <- [0 .. 999]]
-
-simpleFinal :: [Instruction] -> M.Map Coord SimpleLight
-simpleFinal instructions = M.intersectionWith ($) (foldr (M.unionWith (flip (.)) . simpleActionMap) M.empty instructions) simpleInit
-
-advancedInit :: M.Map Coord AdvancedLight
-advancedInit = M.fromList [((x, y), Z) | x <- [0 .. 999], y <- [0 .. 999]]
-
-advancedFinal :: [Instruction] -> M.Map Coord AdvancedLight
-advancedFinal instructions = M.intersectionWith ($) (foldr (M.unionWith (flip (.)) . advancedActionMap) M.empty instructions) advancedInit
+finalLight :: Light -> [Instruction] -> M.Map Coord Light
+finalLight light instructions = M.intersectionWith ($) (foldr (M.unionWith (flip (.)) . actionMap) M.empty instructions) (initLight light)
 
 y2015d6ex1 :: IO ()
 y2015d6ex1 = do
@@ -93,7 +75,7 @@ y2015d6ex1 = do
   let instructions = case p contents of
         Left _ -> error "Input failed to parse"
         Right res -> res
-  let ans = M.size $ M.filter (== On) $ simpleFinal instructions
+  let ans = M.size $ M.filter (== Simple True) $ finalLight (Simple False) instructions
   print ans
 
 y2015d6ex2 :: IO ()
@@ -102,5 +84,12 @@ y2015d6ex2 = do
   let instructions = case p contents of
         Left _ -> error "Input failed to parse"
         Right res -> res
-  let ans = sum $ M.map natToInt $ advancedFinal instructions
+  let ans =
+        sum $
+          M.map
+            ( \case
+                Simple _ -> 0
+                Advanced n -> natToInt n
+            )
+            $ finalLight (Advanced Z) instructions
   print ans
