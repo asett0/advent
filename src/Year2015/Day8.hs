@@ -1,5 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
-
 module Year2015.Day8 where
 
 import Data.Char as C (digitToInt)
