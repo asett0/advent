@@ -30,6 +30,7 @@ library
       Year2015.Day1
       Year2015.Day10
       Year2015.Day11
+      Year2015.Day12
       Year2015.Day2
       Year2015.Day3
       Year2015.Day4
@@ -43,11 +44,15 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , bytestring
     , containers
     , cryptonite
     , parsec
+    , scientific
+    , unordered-containers
+    , vector
   default-language: Haskell2010
 
 executable advent-exe
@@ -59,11 +64,15 @@ executable advent-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       advent
+    , aeson
     , base >=4.7 && <5
     , bytestring
     , containers
     , cryptonite
     , parsec
+    , scientific
+    , unordered-containers
+    , vector
   default-language: Haskell2010
 
 test-suite advent-test
@@ -76,9 +85,13 @@ test-suite advent-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       advent
+    , aeson
     , base >=4.7 && <5
     , bytestring
     , containers
     , cryptonite
     , parsec
+    , scientific
+    , unordered-containers
+    , vector
   default-language: Haskell2010
