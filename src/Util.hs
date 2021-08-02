@@ -3,7 +3,7 @@ module Util where
 import System.IO (IOMode (ReadMode), hGetContents, openFile)
 import Text.Parsec (Parsec)
 import Text.Parsec.Language (haskell)
-import Text.Parsec.Token (GenTokenParser (decimal, natural), TokenParser)
+import Text.Parsec.Token (GenTokenParser (decimal, integer, natural), TokenParser)
 
 getData :: String -> IO String
 getData fileName = do
@@ -15,6 +15,9 @@ lexer = haskell
 
 nat :: Parsec String () Integer
 nat = natural lexer
+
+int :: Parsec String () Integer
+int = integer lexer
 
 dec :: Parsec String () Integer
 dec = decimal lexer
