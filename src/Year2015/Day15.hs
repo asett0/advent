@@ -42,11 +42,11 @@ p = P.parse parser ""
 
 sums :: Int -> Int -> [[Int]]
 sums n tot =
-  let sumTails = foldr ($) [[]] (replicate (n - 1) $ concatMap (extendSum tot))
+  let sumTails = foldr ($) [[]] (replicate (n - 1) $ concatMap extendSum)
    in map (\sumTail -> tot - sum sumTail : sumTail) sumTails
   where
-    extendSum :: Int -> [Int] -> [[Int]]
-    extendSum tot rest = [x : rest | x <- [0 .. max (tot - sum rest) 0]]
+    extendSum :: [Int] -> [[Int]]
+    extendSum rest = [x : rest | x <- [0 .. max (tot - sum rest) 0]]
 
 score :: Food -> Int
 score food =
