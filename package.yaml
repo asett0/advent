@@ -25,6 +25,7 @@ dependencies:
 - bytestring
 - containers
 - cryptonite
+- hashable
 - parsec
 - scientific
 - unordered-containers

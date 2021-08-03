@@ -34,6 +34,7 @@ library
       Year2015.Day13
       Year2015.Day14
       Year2015.Day15
+      Year2015.Day16
       Year2015.Day2
       Year2015.Day3
       Year2015.Day4
@@ -52,6 +53,7 @@ library
     , bytestring
     , containers
     , cryptonite
+    , hashable
     , parsec
     , scientific
     , unordered-containers
@@ -72,6 +74,7 @@ executable advent-exe
     , bytestring
     , containers
     , cryptonite
+    , hashable
     , parsec
     , scientific
     , unordered-containers
@@ -93,6 +96,7 @@ test-suite advent-test
     , bytestring
     , containers
     , cryptonite
+    , hashable
     , parsec
     , scientific
     , unordered-containers
