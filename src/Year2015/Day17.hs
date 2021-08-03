@@ -2,7 +2,7 @@ module Year2015.Day17 where
 
 import qualified Text.Parsec as P
 import Text.Parsec.Error (ParseError)
-import Text.Parsec.Prim (Parsec, (<|>))
+import Text.Parsec.Prim (Parsec)
 import qualified Util as U
 
 input :: IO String
