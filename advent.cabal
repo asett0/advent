@@ -41,6 +41,8 @@ library
       Year2015.Day2
       Year2015.Day20
       Year2015.Day21
+      Year2015.Day22
+      Year2015.Day23
       Year2015.Day3
       Year2015.Day4
       Year2015.Day5
@@ -59,6 +61,7 @@ library
     , containers
     , cryptonite
     , hashable
+    , mtl
     , parsec
     , scientific
     , unordered-containers
@@ -80,6 +83,7 @@ executable advent-exe
     , containers
     , cryptonite
     , hashable
+    , mtl
     , parsec
     , scientific
     , unordered-containers
@@ -102,6 +106,7 @@ test-suite advent-test
     , containers
     , cryptonite
     , hashable
+    , mtl
     , parsec
     , scientific
     , unordered-containers

@@ -26,6 +26,7 @@ dependencies:
 - containers
 - cryptonite
 - hashable
+- mtl
 - parsec
 - scientific
 - unordered-containers

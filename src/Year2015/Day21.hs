@@ -13,7 +13,6 @@ data Character = Character
     charDamage :: Int,
     charArmour :: Int
   }
-  deriving (Show)
 
 instance Eq Character where
   (==) you enemy = charName you == charName enemy
@@ -24,7 +23,7 @@ data Item = Item
     itemDamage :: Int,
     itemArmour :: Int
   }
-  deriving (Show, Eq, Ord)
+  deriving (Eq, Ord)
 
 input :: IO String
 input = U.getData "data/2015/Day21.txt"
@@ -85,10 +84,10 @@ validItems is =
 itemsCost :: S.Set Item -> Int
 itemsCost = foldl' (\acc item -> acc + cost item) 0
 
-winningItemss :: Character -> Character -> Character -> S.Set (S.Set Item)
-winningItemss you enemy winner =
+validItemss :: S.Set (S.Set Item)
+validItemss =
   let itemss = S.powerSet (weapons `S.union` armours `S.union` rings)
-   in S.filter (\items -> game (equip you items) enemy == winner) $ S.filter validItems itemss
+   in S.filter validItems itemss
 
 y2015d21ex1 :: IO ()
 y2015d21ex1 = do
@@ -97,8 +96,7 @@ y2015d21ex1 = do
         Left _ -> error "Input failed to parse"
         Right res -> res
   let you = Character {charName = "You", hitPoints = 100, charDamage = 0, charArmour = 0}
-
-  let ans = minimum $ S.map itemsCost $ winningItemss you boss you
+  let ans = minimum $ S.map itemsCost $ S.filter (\items -> game (equip you items) boss == you) validItemss
   print ans
 
 y2015d21ex2 :: IO ()
@@ -108,5 +106,5 @@ y2015d21ex2 = do
         Left _ -> error "Input failed to parse"
         Right res -> res
   let you = Character {charName = "You", hitPoints = 100, charDamage = 0, charArmour = 0}
-  let ans = maximum $ S.map itemsCost $ winningItemss you boss boss
+  let ans = maximum $ S.map itemsCost $ S.filter (\items -> game (equip you items) boss == boss) validItemss
   print ans
