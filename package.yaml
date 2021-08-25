@@ -26,11 +26,14 @@ dependencies:
 - containers
 - cryptonite
 - hashable
+- hspec
 - mtl
 - parsec
+- QuickCheck
 - scientific
 - unordered-containers
 - vector
+
 
 library:
   source-dirs: src

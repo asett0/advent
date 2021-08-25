@@ -57,12 +57,14 @@ library
   hs-source-dirs:
       src
   build-depends:
-      aeson
+      QuickCheck
+    , aeson
     , base >=4.7 && <5
     , bytestring
     , containers
     , cryptonite
     , hashable
+    , hspec
     , mtl
     , parsec
     , scientific
@@ -78,13 +80,15 @@ executable advent-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      advent
+      QuickCheck
+    , advent
     , aeson
     , base >=4.7 && <5
     , bytestring
     , containers
     , cryptonite
     , hashable
+    , hspec
     , mtl
     , parsec
     , scientific
@@ -101,13 +105,15 @@ test-suite advent-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      advent
+      QuickCheck
+    , advent
     , aeson
     , base >=4.7 && <5
     , bytestring
     , containers
     , cryptonite
     , hashable
+    , hspec
     , mtl
     , parsec
     , scientific
