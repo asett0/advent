@@ -59,7 +59,10 @@ p = P.parse parser ""
 
 calibration :: Replacements -> Molecule -> [Molecule]
 calibration _ [] = []
-calibration replacements (molHead : molRest) = L.nub $ map (++ molRest) (replace molHead) ++ map (molHead :) (calibration replacements molRest)
+calibration replacements (molHead : molRest) =
+  L.nub $
+    map (++ molRest) (replace molHead)
+      ++ map (molHead :) (calibration replacements molRest)
   where
     replace :: Atom -> [Molecule]
     replace atom = fromMaybe [] (M.lookup atom replacements)
